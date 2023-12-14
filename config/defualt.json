@@ -1,0 +1,9 @@
+{
+  "db": {
+    "user": "postgres",
+    "host": "localhost",
+    "database": "task",
+    "password": "Iganmode",
+    "port": 5433
+  }
+}
