@@ -38,10 +38,7 @@ class Task {
 
   static async getUserTasks(userId, filters = {}) {
     try {
-      const { queryClause, queryArray, objLen } = buildQuery(
-        filters,
-        "filters"
-      );
+      const { queryClause, queryArray, objLen } = buildQuery(filters, "filter");
 
       const { rows, rowCount } = await pool.query(
         `SELECT * FROM tasks WHERE ${queryClause} user_id = $${objLen + 1}`,

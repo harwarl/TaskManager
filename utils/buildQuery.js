@@ -6,6 +6,7 @@ function buildQuery(object, type = "query") {
   let queryArray = [];
   const _seperator = type === "filter" ? "AND " : ", ";
   const _endSep = type === "filter" ? " AND" : "";
+  console.log({ objLen });
   for (let x = 0; x < objLen; x++) {
     queryArray.push(rows[x]);
     if (x === objLen - 1) {
