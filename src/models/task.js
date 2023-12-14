@@ -66,11 +66,11 @@ class Task {
 
         const values = [...queryArray, task_id, user_id];
         const { rowCount } = await pool.query(query, values);
-        if (rowCount > 0) {
-          return true;
+        if (rowCount === 0) {
+          return false;
         }
       } else {
-        return false;
+        return true;
       }
     } catch (error) {
       console.log("Update Task Error- ", error.message);
@@ -78,9 +78,16 @@ class Task {
     }
   }
 
-  static async deleteTask(task_id) {
+  static async deleteTask(task_id, user_id) {
     try {
-      const { rows } = await pool.query();
+      const { rowCount } = await pool.query(
+        "DELETE FROM tasks WHERE task_id = $1 AND user_id = $2",
+        [task_id, user_id]
+      );
+      if (rowCount === 0) {
+        return false;
+      }
+      return true;
     } catch (error) {
       console.log("Update Task Error- ", error.message);
       throw error;

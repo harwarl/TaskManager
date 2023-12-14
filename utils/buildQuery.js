@@ -1,6 +1,5 @@
 function buildQuery(object) {
   const rows = Object.values(object);
-  console.log({ rows });
   const columns = Object.keys(object);
   const objLen = columns.length;
   let queryClause = "";

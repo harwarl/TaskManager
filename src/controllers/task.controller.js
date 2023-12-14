@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
 const { Task } = require("../models/task");
+const { isObjectEmpty } = require("../../utils/checkObject");
 
 async function addTask(req, res, next) {
   const userId = req.userId;
@@ -17,6 +18,7 @@ async function addTask(req, res, next) {
     next(error);
   }
 }
+
 async function getTasks(req, res, next) {
   const userId = req.userId;
   try {
@@ -43,7 +45,17 @@ async function updateTask(req, res, next) {
     if (typeof dueDate !== "undefined") {
       updated.due_date = new Date(Date.parse(dueDate));
     }
+    if (isObjectEmpty(updated)) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ status: false, updated: false });
+    }
     const updatedTask = await Task.updateTask(id, userId, updated);
+    if (!updateTask) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ status: true, updated: false, message: "Could not update" });
+    }
     return res.status(httpStatus.OK).json({ status: true, updated: true });
   } catch (error) {
     console.log(error);
@@ -53,9 +65,14 @@ async function updateTask(req, res, next) {
 
 async function deleteTask(req, res, next) {
   const userId = req.userId;
-  const id = req.params;
+  const id = Number(req.params.id);
   try {
-    const deletedTask = await Task.deleteTask(id);
+    const deleted = await Task.deleteTask(id, userId);
+    if (!deleted) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ status: true, deleted: false });
+    }
     return res.status(httpStatus.OK).json({ status: true, deleted: true });
   } catch (error) {
     console.log(error);
