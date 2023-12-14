@@ -38,6 +38,7 @@ const schemas = {
     title: Joi.string(),
     description: Joi.string(),
     dueDate: Joi.date(),
+    status: Joi.boolean(),
   }),
 };
 

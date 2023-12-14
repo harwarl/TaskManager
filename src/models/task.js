@@ -1,5 +1,5 @@
 const { pool } = require("../../config/database");
-const { STATUS } = require("../../utils/data");
+const { buildQuery } = require("../../utils/buildQuery");
 
 class Task {
   constructor(title, description, dueDate, userId) {
@@ -8,7 +8,7 @@ class Task {
     this.description = description;
     this.due_date = dueDate;
     this.user_id = userId;
-    this.status = STATUS[0];
+    this.status = false;
     this.createdat = new Date();
   }
 
@@ -52,35 +52,26 @@ class Task {
   }
 
   static async updateTask(task_id, user_id, updateData) {
-    // const columnsUpdate = Object.keys(updateData);
-    // const valuesUpdate = Object.values(updateData);
-    // const setClause = columnsUpdate.map((columns, index) => {});
     try {
-      if (updateData.title) {
-        const { rows } = await pool.query(
-          "UPDATE tasks SET title = $1 WHERE task_id = $2",
-          [updateData.title, task_id]
-        );
+      //check is task exists
+      const { rowCount } = await pool.query(
+        "SELECT * FROM tasks WHERE task_id = $1 AND user_id = $2",
+        [task_id, user_id]
+      );
+      if (rowCount > 0) {
+        const { queryClause, queryArray, objLen } = buildQuery(updateData);
+        const query = `UPDATE tasks SET ${queryClause} WHERE task_id = $${
+          objLen + 1
+        } AND user_id = $${objLen + 2}`;
+
+        const values = [...queryArray, task_id, user_id];
+        const { rowCount } = await pool.query(query, values);
+        if (rowCount > 0) {
+          return true;
+        }
+      } else {
+        return false;
       }
-      if (updateData.description) {
-        const { rows } = await pool.query(
-          "UPDATE tasks SET description = $1 WHERE task_id = $2",
-          [updateData.description, task_id]
-        );
-      }
-      if (updateData.dueDate) {
-        const { rows } = await pool.query(
-          "UPDATE tasks SET due_date = $1 WHERE task_id = $2",
-          [updateData.dueDate, task_id]
-        );
-      }
-      if (updateData.status) {
-        const { rows } = await pool.query(
-          "UPDATE tasks SET description = $1 WHERE task_id = $2 AND user_id = $3",
-          [updateData.description, task_id, user_id]
-        );
-      }
-      return rows[0];
     } catch (error) {
       console.log("Update Task Error- ", error.message);
       throw error;

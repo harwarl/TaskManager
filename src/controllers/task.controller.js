@@ -27,24 +27,30 @@ async function getTasks(req, res, next) {
     next(error);
   }
 }
+
 async function updateTask(req, res, next) {
   const userId = req.userId;
-  const id = req.params;
+  const id = Number(req.params.id);
   try {
-    const { title, description, dueDate, status } = req.body;
-    const updateData = {
-      title,
-      description,
-      dueDate: new Date(dueDate),
-      status,
-    };
-    const updatedTask = await Task.updateTask(id, userId, updateData);
+    const { title, description, dueDate } = req.body;
+    const updated = {};
+    if (typeof title === "string") {
+      updated.title = title;
+    }
+    if (typeof description === "string") {
+      updated.description = description;
+    }
+    if (typeof dueDate !== "undefined") {
+      updated.due_date = new Date(Date.parse(dueDate));
+    }
+    const updatedTask = await Task.updateTask(id, userId, updated);
     return res.status(httpStatus.OK).json({ status: true, updated: true });
   } catch (error) {
     console.log(error);
     next(error);
   }
 }
+
 async function deleteTask(req, res, next) {
   const userId = req.userId;
   const id = req.params;

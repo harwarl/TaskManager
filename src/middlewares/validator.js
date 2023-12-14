@@ -1,6 +1,6 @@
 function validator(schema, part = "body") {
   return (req, res, next) => {
-    const { error, value } = schema.validate(req["body"]);
+    const { error, value } = schema.validate(req[part]);
     if (error) {
       return res
         .status(400)
