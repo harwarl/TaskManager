@@ -13,7 +13,6 @@ class Task {
   }
 
   async save() {
-    console.log(this.user_id);
     try {
       const { rows } = await pool.query(
         "INSERT INTO tasks ( title, description, due_date, status, user_id) VALUES ($1, $2, $3, $4, $5)",
@@ -23,6 +22,7 @@ class Task {
           new Date(this.due_date),
           this.status,
           this.user_id,
+          this.createdat,
         ]
       );
       if (Array.isArray(rows)) {

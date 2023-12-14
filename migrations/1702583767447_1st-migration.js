@@ -31,18 +31,9 @@ exports.up = (pgm) => {
     },
   });
   pgm.createIndex("tasks", "user_id");
-  pgm.addColumns("tasks", {
-    createdat: {
-      type: "timestamp",
-      notNull: true,
-      default: pgm.func("current_timestamp"),
-    },
-  });
 };
 
 exports.down = (pgm) => {
   pgm.dropTable("tasks");
   pgm.dropTable("users");
 };
-
-exports.up = (pgm) => {};
