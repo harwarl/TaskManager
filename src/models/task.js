@@ -1,5 +1,6 @@
 const { pool } = require("../../config/database");
 const { buildQuery } = require("../../utils/buildQuery");
+const { isObjectEmpty } = require("../../utils/checkObject");
 
 class Task {
   constructor(title, description, dueDate, userId) {
@@ -15,7 +16,7 @@ class Task {
   async save() {
     try {
       const { rows } = await pool.query(
-        "INSERT INTO tasks ( title, description, due_date, status, user_id) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO tasks ( title, description, due_date, status, user_id, createdat) VALUES ($1, $2, $3, $4, $5, $6)",
         [
           this.title,
           this.description,
@@ -26,24 +27,30 @@ class Task {
         ]
       );
       if (Array.isArray(rows)) {
-        return rows;
+        return true;
       }
+      return false;
     } catch (error) {
       console.log("Task Save Failed -", error.message);
       throw error;
     }
   }
 
-  static async getUserTasks(userId) {
+  static async getUserTasks(userId, filters = {}) {
     try {
+      const { queryClause, queryArray, objLen } = buildQuery(
+        filters,
+        "filters"
+      );
+
       const { rows, rowCount } = await pool.query(
-        "SELECT * FROM tasks WHERE user_id = $1",
-        [userId]
+        `SELECT * FROM tasks WHERE ${queryClause} user_id = $${objLen + 1}`,
+        [...queryArray, userId]
       );
       if (rowCount > 0) {
         return rows;
       } else {
-        return null;
+        return [];
       }
     } catch (error) {
       console.log("Update Task Error- ", error.message);

@@ -1,6 +1,5 @@
 const httpStatus = require("http-status");
 const { Task } = require("../models/task");
-const { isObjectEmpty } = require("../../utils/checkObject");
 
 async function addTask(req, res, next) {
   const userId = req.userId;
@@ -8,11 +7,14 @@ async function addTask(req, res, next) {
     const { title, description, dueDate } = req.body;
     const newTask = new Task(title, description, Date.parse(dueDate), userId);
     const values = newTask.save();
-    if (values) {
+    if (!values) {
       return res
-        .status(httpStatus.OK)
-        .json({ status: true, message: "Task Created" });
+        .status(httpStatus.BAD_REQUEST)
+        .json({ status: false, message: "Creation failed" });
     }
+    return res
+      .status(httpStatus.OK)
+      .json({ status: true, message: "Task Created" });
   } catch (error) {
     console.log("Add Task Error -", error.message);
     next(error);
@@ -21,8 +23,9 @@ async function addTask(req, res, next) {
 
 async function getTasks(req, res, next) {
   const userId = req.userId;
+  const filters = req.query;
   try {
-    const tasks = await Task.getTasks(userId);
+    const tasks = await Task.getUserTasks(userId, filters);
     return res.status(httpStatus.OK).json({ status: true, tasks });
   } catch (error) {
     console.log(error);
