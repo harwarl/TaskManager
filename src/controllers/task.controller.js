@@ -51,7 +51,7 @@ async function updateTask(req, res, next) {
         .json({ status: false, updated: false });
     }
     const updatedTask = await Task.updateTask(id, userId, updated);
-    if (!updateTask) {
+    if (!updatedTask) {
       return res
         .status(httpStatus.BAD_REQUEST)
         .json({ status: true, updated: false, message: "Could not update" });
