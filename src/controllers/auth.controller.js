@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const bcrypt = require("bcrypt");
 const { signToken } = require("../../utils/jwt");
 const { User } = require("../models/user");
-const { Task } = require("../models/task");
+// const { Task } = require("../models/task");
 
 async function signup(req, res, next) {
   try {
@@ -76,20 +76,29 @@ async function signin(req, res, next) {
   }
 }
 
-async function getUser(req, res, next) {
-  const userId = req.userId;
-  try {
-    const user = await User.findUserById(userId);
-    const tasks = await Task.getUserTasks(userId);
-    return res.status(httpStatus.OK).json({ status: true, user, tasks });
-  } catch (error) {
-    console.log(error.message);
-    next(error);
-  }
+// async function getUser(req, res, next) {
+//   const userId = req.userId;
+//   try {
+//     const user = await User.findUserById(userId);
+//     const tasks = await Task.getUserTasks(userId);
+//     return res.status(httpStatus.OK).json({ status: true, user, tasks });
+//   } catch (error) {
+//     console.log(error.message);
+//     next(error);
+//   }
+// }
+
+async function logout(req, res, next) {
+  res
+    .clearCookie("token")
+    .status(httpStatus.OK)
+    .json({ status: true, message: "Signout success!" });
+  res.setHeader("Authorization", "");
 }
 
 module.exports = {
   signup,
   signin,
   getUser,
+  logout,
 };
