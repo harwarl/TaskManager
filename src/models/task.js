@@ -43,8 +43,6 @@ class Task {
       if (isPage) delete filters["page"];
       const { queryClause, queryArray, objLen } = buildQuery(filters, "filter");
 
-      console.log({ offset, limit });
-
       const { rows, rowCount } = await pool.query(
         `SELECT * FROM tasks WHERE ${queryClause} user_id = $${objLen + 1} ${
           offset ? `OFFSET ${offset}` : ""
