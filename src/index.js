@@ -21,9 +21,11 @@ require("./routes/index")(app);
 
 // ROOT ROUTE
 app.get("/", (req, res, next) => {
-  return res
-    .status(httpStatus.OK)
-    .json({ status: true, message: "Task Manager Rest API" });
+  return res.status(httpStatus.OK).json({
+    status: true,
+    message: "Task Manager Rest API",
+    repo: "https://github.com/harwarl/TaskManager.git",
+  });
 });
 
 // NOT FOUND
