@@ -45,4 +45,5 @@ async function updateUser(req, res, next) {
 
 module.exports = {
   getUser,
+  updateUser,
 };
