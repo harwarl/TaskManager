@@ -46,6 +46,24 @@ class User {
     }
   }
 
+  static async updateUser(updateData, user_id) {
+    try {
+      const { queryClause, queryArray, objLen } = buildQuery(updateData);
+      const query = `UPDATE user SET ${queryClause} WHERE user_id = $${
+        objLen + 1
+      }`;
+
+      const values = [...queryArray, user_id];
+      const { rowCount } = await pool.query(query, values);
+      if (rowCount === 0) {
+        return false;
+      } else return true;
+    } catch (error) {
+      console.log("Update User Error- ", error.message);
+      throw error;
+    }
+  }
+
   async save() {
     try {
       const { rows } = await pool.query(

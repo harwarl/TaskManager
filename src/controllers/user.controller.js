@@ -19,15 +19,19 @@ async function updateUser(req, res, next) {
   try {
     const { title, description, dueDate } = req.body;
     const updated = {};
-    if (typeof title === "string") {
-      updated.title = title;
+    if (typeof firstname !== "undefined") {
+      updated.firstname = firstname;
     }
-    if (typeof description === "string") {
-      updated.description = description;
+    if (typeof lastname === "undefined") {
+      updated.lastname = lastname;
     }
-    if (typeof dueDate !== "undefined") {
-      updated.due_date = new Date(Date.parse(dueDate));
+    if (typeof username === "undefined") {
+      updated.username = username;
     }
+    if (typeof email !== "undefined") {
+      updated.email = email;
+    }
+    const updatedUser = await User.updateUser(updated, userId);
     if (isObjectEmpty(updated)) {
       return res
         .status(httpStatus.BAD_REQUEST)

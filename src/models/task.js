@@ -77,9 +77,9 @@ class Task {
         const { rowCount } = await pool.query(query, values);
         if (rowCount === 0) {
           return false;
-        }
+        } else return true;
       } else {
-        return true;
+        return false;
       }
     } catch (error) {
       console.log("Update Task Error- ", error.message);
